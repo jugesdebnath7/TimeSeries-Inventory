@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./src/timeseries_inventory",
+        "./src/timeseries_inventory/data_config"
+    ]
+}

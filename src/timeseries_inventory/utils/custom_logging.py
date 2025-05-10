@@ -4,11 +4,12 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 
-def logger_config(
+def custom_logger(
         log_file="ml_model.log",
         log_level=logging.INFO, 
         base_dir=None, 
         logger_name: str = "ML_Logger"):
+    
     """
     Setup a rotating logger.
 
@@ -21,9 +22,10 @@ def logger_config(
         logging.Logger: Configured logger instance    
     
     """
+    
     # Determine the base firectory
     if base_dir is None:
-        base_dir = os.path.join(os.getcwd(), "../artifacts")
+        base_dir = os.path.join(os.getcwd(), "./artifacts")
 
     # Ensure log sub directories exists
     log_directory = os.path.join(base_dir, "logs")
@@ -33,7 +35,8 @@ def logger_config(
     log_file_path = os.path.join(log_directory, log_file)
 
     # Convert string level to numeric logging level
-    log_level = getattr(logging, log_level.upper(), logging.INFO)
+    if isinstance(log_level, str):
+        log_level = getattr(logging, log_level.upper(), logging.INFO)
 
     # Create custom logger
     logger = logging.getLogger(logger_name)
