@@ -2,9 +2,11 @@
 data_ingestion:
   stage: "raw"
   input:
-    directory: "data/raw"
+    source: "local"  # or "s3"
+    path: "data/raw" # or "s3://my-bucket/data/raw"
     file_pattern: "*.csv"
     max_files: 100
+    chunksize: 10000  
   retry:
     attempts: 3
     delay_seconds: 5

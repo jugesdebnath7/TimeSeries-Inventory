@@ -31,9 +31,11 @@ __all__ = [
 class DataIngestionConfig:
     stage: str
     input: Dict[str, Union[str, int]]
-    directory: Path
+    source: str
+    path: str
     file_pattern: str
     max_files: int
+    chunksize: int
     retry: Dict[str, int]
     attempts: int
     delay_seconds: int

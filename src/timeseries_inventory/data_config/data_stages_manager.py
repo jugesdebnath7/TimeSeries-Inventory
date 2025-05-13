@@ -33,9 +33,11 @@ class DataStagesManager:
         return DataIngestionConfig(
             stage = yaml_data.stage,
             input = yaml_data.input,
-            directory = yaml_data.input.directory,
+            source = yaml_data.input.source,
+            path = yaml_data.input.path,
             file_pattern = yaml_data.input.file_pattern,
             max_files = yaml_data.input.max_files,
+            chunksize = yaml_data.input.chunksize,
             retry = yaml_data.retry,
             attempts = yaml_data.retry.attempts,
             delay_seconds = yaml_data.retry.delay_seconds
