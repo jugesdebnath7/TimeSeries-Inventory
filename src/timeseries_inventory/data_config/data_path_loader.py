@@ -2,7 +2,7 @@
 
 import yaml
 from pathlib import Path
-from typing import Any, Optional, List, Union
+from typing import Any, Optional, Union, Dict
 from timeseries_inventory.utils.custom_logging import custom_logger
 
 
@@ -13,9 +13,10 @@ class DataPathLoader:
     using dot and bracket notation.
     """
     
-    def __init__(self, 
-                 data_path:Optional[Union[str, Path]] = None
-                 ):
+    def __init__(
+        self, 
+        data_path:Optional[Union[str, Path]] = None
+        ):
         self.logger = custom_logger()
         if data_path:
             self.data_path = Path(data_path) 
@@ -33,29 +34,27 @@ class DataPathLoader:
                 yaml_data = yaml.safe_load(f) or {}
                 self.logger.info(f"Successfully loaded YAML file from {self.data_path}")
         except yaml.YAMLError as e:
-            self.logger.exception(f"Fail to parse YAML")
+            self.logger.exception(f"Failed to parse YAML")
             raise ValueError(f"Error parsing YAML data path: {e}")
-        return yaml_data    
+        # return yaml_data  
+        return self._convert_paths(yaml_data)  
     
-    
-    def _extract_keys(self, data:Any, parent_key:str = "") -> List[str]:
+    def _convert_paths(self, data: Any) -> Any:
         """
-        Recursively extracts all key paths from a nested dictionary or list.
+        Recursively convert 'path' keys to Path objects where the value is a string.
         """
-        keys = []
         if isinstance(data, dict):
+            new_data = {}
             for k, v in data.items():
-                full_key = f"{parent_key}.{k}" if parent_key else k
-                keys.append(full_key)
-                keys.extend(self._extract_keys(v, full_key))  # Recurse if value is a dict
+                if k == 'path' and isinstance(v, str):
+                    new_data[k] = Path(v)
+                else:
+                    new_data[k] = self._convert_paths(v) 
+            return new_data
         elif isinstance(data, list):
-            for idx, item in enumerate(data):
-                full_key = f"{parent_key}[{idx}]"
-                keys.append(full_key)
-                keys.extend(self._extract_keys(item, full_key)) # Recurse if item is a dict or list
-        return keys
-
-
-    def get_yaml_data(self) -> List[str]:
-        yaml_data_path = self._load_yaml()
-        return self._extract_keys(yaml_data_path)
+            return [self._convert_paths(item) for item in data]
+        return data
+    
+    
+    def get_yaml_data(self) -> Dict: 
+        return self._load_yaml()

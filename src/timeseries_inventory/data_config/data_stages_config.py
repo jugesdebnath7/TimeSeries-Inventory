@@ -32,7 +32,7 @@ class DataIngestionConfig:
     stage: str
     input: Dict[str, Union[str, int]]
     source: str
-    path: str
+    path: Path
     file_pattern: str
     max_files: int
     chunksize: int
